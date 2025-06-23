@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Badiang Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: #f4f4f4;
+    }
+
+    header {
+      background-color: #2a4365;
+      color: white;
+      padding: 15px 0;
+      text-align: center;
+      font-size: 1.8em;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    #buttons {
+      padding: 12px;
+      text-align: center;
+      background-color: #ffffff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    button {
+      margin: 5px;
+      padding: 10px 20px;
+      font-size: 15px;
+      font-weight: 600;
+      background-color: #3182ce;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #2b6cb0;
+    }
+
+    #map {
+      height: 85vh;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    🗺️ Badiang Map
+  </header>
+
+  <div id="buttons">
+    <button onclick="toggleBoundaries()">🟦 Toggle Boundaries</button>
+    <button onclick="toggleBusinesses()">🏪 Toggle Businesses</button>
+  </div>
+
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const baseLayers = {
+      "🗺️ Street Map": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }),
+      "🛰️ Satellite (Esri)": L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 18, attribution: '&copy; Esri'
+      })
+    };
+
+    const map = L.map('map', {
+      center: [10.15, 124.85],
+      zoom: 13,
+      layers: [baseLayers["🗺️ Street Map"]]
+    });
+
+    let boundariesLayer = null;
+    let businessesLayer = null;
+
+    const layerControl = L.control.layers(baseLayers, {}).addTo(map);
+
+    function toggleBoundaries() {
+      if (boundariesLayer) {
+        if (map.hasLayer(boundariesLayer)) {
+          map.removeLayer(boundariesLayer);
+          layerControl.removeLayer(boundariesLayer);
+        } else {
+          map.addLayer(boundariesLayer);
+          layerControl.addOverlay(boundariesLayer, "🟦 Boundaries");
+        }
+      } else {
+        fetch('boundaries.geojson')
+          .then(res => res.json())
+          .then(data => {
+            boundariesLayer = L.geoJSON(data, {
+              style: { color: 'blue', weight: 2, fillOpacity: 0.1 }
+            }).addTo(map);
+            layerControl.addOverlay(boundariesLayer, "🟦 Boundaries");
+          });
+      }
+    }
+
+    function toggleBusinesses() {
+      if (businessesLayer) {
+        if (map.hasLayer(businessesLayer)) {
+          map.removeLayer(businessesLayer);
+          layerControl.removeLayer(businessesLayer);
+        } else {
+          map.addLayer(businessesLayer);
+          layerControl.addOverlay(businessesLayer, "🏪 Businesses");
+        }
+      } else {
+        fetch('businesses.geojson')
+          .then(res => res.json())
+          .then(data => {
+            businessesLayer = L.geoJSON(data, {
+              pointToLayer: (feature, latlng) => {
+                const props = feature.properties;
+                const popup = `
+                  <strong>🏋️ ${props.name || 'Business Name'}</strong><br>
+                  🏷️ Type: ${props.type || 'N/A'}<br>
+                  📝 ${props.description || ''}
+                `;
+                return L.marker(latlng).bindPopup(popup);
+              }
+            }).addTo(map);
+            layerControl.addOverlay(businessesLayer, "🏪 Businesses");
+          });
+      }
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,18 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Badiang Gym",
+        "type": "Gym",
+        "description": "A local gym offering various fitness programs and equipment."
+        
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [124.8040555477802, 10.140734897826377]
+      }
+    }
+  ]
+}
