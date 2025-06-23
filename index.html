@@ -116,7 +116,7 @@
           layerControl.addOverlay(businessesLayer, "🏪 Businesses");
         }
       } else {
-        fetch('businesses.geojson')
+        fetch('gis-toggle-map/businesses.geojson')
           .then(res => res.json())
           .then(data => {
             businessesLayer = L.geoJSON(data, {
