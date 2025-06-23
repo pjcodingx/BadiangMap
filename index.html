@@ -95,7 +95,7 @@
           layerControl.addOverlay(boundariesLayer, "🟦 Boundaries");
         }
       } else {
-        fetch('boundaries.geojson')
+        fetch('gis-toggle-map/boundaries.geojson')
           .then(res => res.json())
           .then(data => {
             boundariesLayer = L.geoJSON(data, {
@@ -116,7 +116,7 @@
           layerControl.addOverlay(businessesLayer, "🏪 Businesses");
         }
       } else {
-        fetch('businesses.geojson')
+        fetch('gis-toggle-map/businesses.geojson')
           .then(res => res.json())
           .then(data => {
             businessesLayer = L.geoJSON(data, {
