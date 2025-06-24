@@ -54,7 +54,7 @@
     }
 
 
-   #hamburger {
+  #hamburger {
   position: fixed;
   top: 20px;
   left: 20px;
@@ -71,7 +71,7 @@
 #sidebar {
   position: fixed;
   top: 0;
-  left: -300px; /* fully off screen */
+  left: -300px; 
   width: -280px;
   height: 100%;
   background: white;
@@ -83,11 +83,21 @@
 }
 
 #sidebar.active {
-  left: 0; /* slide into view */
+  left: 0; 
 }
 
 #sidebar h2 {
   margin-top: 0;
+}
+
+
+@media (max-width: 480px) {
+  #hamburger {
+    left: 10px; 
+    top: 15px;
+    font-size: 20px;
+    padding: 8px 12px;
+  }
 }
 
 
