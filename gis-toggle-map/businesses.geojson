@@ -6,7 +6,7 @@
       "properties": {
         "name": "Badiang Gym",
         "type": "Gym",
-        "description": "A local gym offering various fitness programs and equipment."
+        "description": "A gym for events, sports and more."
         
       },
       "geometry": {
