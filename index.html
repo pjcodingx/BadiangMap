@@ -52,6 +52,45 @@
       height: 85vh;
       width: 100%;
     }
+
+
+   #hamburger {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 2000;
+  background: #2a4365;
+  color: white;
+  font-size: 24px;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+#sidebar {
+  position: fixed;
+  top: 0;
+  left: -300px; /* fully off screen */
+  width: -280px;
+  height: 100%;
+  background: white;
+  padding: 80px 20px 20px;
+  box-shadow: 2px 0 6px rgba(0,0,0,0.2);
+  transition: left 0.3s ease-in-out;
+  z-index: 1500;
+  overflow-y: auto;
+}
+
+#sidebar.active {
+  left: 0; /* slide into view */
+}
+
+#sidebar h2 {
+  margin-top: 0;
+}
+
+
   </style>
 </head>
 <body>
@@ -59,6 +98,22 @@
   <header>
     🗺️ Badiang Map
   </header>
+
+  <!-- Hamburger Button -->
+<div id="hamburger" onclick="toggleSidebar()">☰</div>
+
+<!-- Sidebar -->
+<div id="sidebar">
+  <h2>📊 Information Panel</h2>
+  <p>This panel can contain:</p>
+  <ul>
+    <li>📍 Population Data</li>
+    <li>👨‍👩‍👧‍👦 Charts</li>
+    <li>🗂️ Layer buttons</li>
+  </ul>
+  <button onclick="loadPopulation()">👥 Load Population Layer</button>
+</div>
+
 
   <div id="buttons">
     <button onclick="toggleBoundaries()">🟨  Boundary</button>
@@ -219,6 +274,19 @@ function toggleSafeZone() {
   }
 }
 
+
+
+
+
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  sidebar.classList.toggle('active');
+}
+
+function loadPopulation() {
+  alert("This will load the population layer (to be implemented)");
+  // In future: fetch population.geojson and add to map
+}
 
   </script>
 
