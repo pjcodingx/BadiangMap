@@ -10,8 +10,9 @@
   <style>
     body {
       margin: 0;
-      font-family: "Segoe UI", sans-serif;
+      font-family: "Times New Roman", sans-serif;
       background: #f4f4f4;
+      font-size: 18px;
     }
 
     header {
@@ -56,7 +57,7 @@
 
   #hamburger {
   position: fixed;
-  top: 20px;
+  top: 15px;
   left: 20px;
   z-index: 2000;
   background: #2a4365;
@@ -90,6 +91,24 @@
   margin-top: 0;
 }
 
+.no-bullet {
+  list-style-type: none;
+  margin-left: 0;
+  padding-left: 0;
+  margin-left: -35px;
+}
+.no-bullet li {
+  margin-left: -20px;
+}
+
+
+.sublist {
+  margin-left: 17px; 
+  
+}
+
+
+
 
 @media (max-width: 480px) {
   #hamburger {
@@ -109,18 +128,25 @@
     🗺️ Badiang Map
   </header>
 
-  <!-- Hamburger Button -->
+  
 <div id="hamburger" onclick="toggleSidebar()">☰</div>
 
-<!-- Sidebar -->
+
 <div id="sidebar">
   <h2>📊 Information Panel</h2>
   <p>This panel can contain:</p>
-  <ul>
-    <li>📍 Population Data</li>
-    <li>👨‍👩‍👧‍👦 Charts</li>
-    <li>🗂️ Layer buttons</li>
-  </ul>
+<ul>
+  <li class="no-bullet">
+    <strong> 📍 Population Data </strong>
+    <ul class="sublist">
+      <li>👩🏻‍🤝‍👩🏻 Total Population: 1,431</li>
+      <li>🏡Total Households: 344</li>
+      <li>👨‍👩‍👧‍👦 Total Families: 392</li>
+    </ul>
+  </li>
+</ul>
+
+
   <button onclick="loadPopulation()">👥 Load Population Layer</button>
 </div>
 
@@ -215,7 +241,7 @@
   }
 }
 
-  // <!----  THIS IS FOR THE 3 BUTTONS------>
+  // <!----  THIS IS FOR THE 3 BUTTONS NEWLY ADDED------>
 
 let greenZoneLayer = null;
 let dangerZoneLayer = null;
@@ -283,7 +309,6 @@ function toggleSafeZone() {
       });
   }
 }
-
 
 
 
