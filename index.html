@@ -5,6 +5,8 @@
   <title>Badiang Map</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="icon" type="image/png" href="images/earth.png">
+
   <style>
     body {
       margin: 0;
@@ -59,8 +61,12 @@
   </header>
 
   <div id="buttons">
-    <button onclick="toggleBoundaries()">🟥 Badiang Boundary</button>
-    <button onclick="toggleBusinesses()">🏪 Badiang Businesses</button>
+    <button onclick="toggleBoundaries()">🟨  Boundary</button>
+    <button onclick="toggleBusinesses()">🏪  Businesses</button>
+    <button onclick="toggleGreenZone()">🟩 Green Zone</button>
+    <button onclick="toggleDangerZone()">❌ Danger Zone</button>
+    <button onclick="toggleSafeZone()"> ✅Safe Zone</button>
+
   </div>
 
   <div id="map"></div>
@@ -99,7 +105,7 @@
           .then(res => res.json())
           .then(data => {
             boundariesLayer = L.geoJSON(data, {
-              style: { color: 'red', weight: 2, fillOpacity: 0.1, dashArray: '4,4' }
+              style: { color: 'yellow', weight: 2, fillOpacity: 0.1, dashArray: '4,4' }
             }).addTo(map);
             layerControl.addOverlay(boundariesLayer, "🟦 Boundaries");
           });
@@ -107,33 +113,113 @@
     }
 
     function toggleBusinesses() {
-      if (businessesLayer) {
-        if (map.hasLayer(businessesLayer)) {
-          map.removeLayer(businessesLayer);
-          layerControl.removeLayer(businessesLayer);
-        } else {
-          map.addLayer(businessesLayer);
-          layerControl.addOverlay(businessesLayer, "🏪 Businesses");
-        }
-      } else {
-        fetch('gis-toggle-map/businesses.geojson')
-          .then(res => res.json())
-          .then(data => {
-            businessesLayer = L.geoJSON(data, {
-              pointToLayer: (feature, latlng) => {
-                const props = feature.properties;
-                const popup = `
-                  <strong>🏋️ ${props.name || 'Business Name'}</strong><br>
-                  🏷️ Type: ${props.type || 'N/A'}<br>
-                  📝 ${props.description || ''}
-                `;
-                return L.marker(latlng).bindPopup(popup);
-              }
-            }).addTo(map);
-            layerControl.addOverlay(businessesLayer, "🏪 Businesses");
-          });
-      }
+  if (businessesLayer) {
+    if (map.hasLayer(businessesLayer)) {
+      map.removeLayer(businessesLayer);
+      layerControl.removeLayer(businessesLayer);
+    } else {
+      map.addLayer(businessesLayer);
+      layerControl.addOverlay(businessesLayer, "🏪 Businesses");
     }
+  } else {
+    fetch('gis-toggle-map/businesses.geojson')
+      .then(res => res.json())
+      .then(data => {
+
+        const gymIcon = L.icon({
+          iconUrl: 'images/basket.png',
+          iconSize: [30, 30],
+          iconAnchor: [15, 30],
+          popupAnchor: [0, -28]
+        });
+
+        businessesLayer = L.geoJSON(data, {
+          pointToLayer: (feature, latlng) => {
+            const props = feature.properties;
+            const popup = `
+              <strong>🏋️ ${props.name || 'Business Name'}</strong><br>
+              🏷️ Type: ${props.type || 'N/A'}<br>
+              📝 ${props.description || ''}
+            `;
+            return L.marker(latlng, { icon: gymIcon }).bindPopup(popup);
+          }
+        }).addTo(map);
+
+        layerControl.addOverlay(businessesLayer, "🏪 Businesses");
+      });
+  }
+}
+
+  // <!----  THIS IS FOR THE 3 BUTTONS------>
+
+let greenZoneLayer = null;
+let dangerZoneLayer = null;
+let safeZoneLayer = null;
+
+function toggleGreenZone() {
+  if (greenZoneLayer) {
+    if (map.hasLayer(greenZoneLayer)) {
+      map.removeLayer(greenZoneLayer);
+      layerControl.removeLayer(greenZoneLayer);
+    } else {
+      map.addLayer(greenZoneLayer);
+      layerControl.addOverlay(greenZoneLayer, "✅ Green Zone");
+    }
+  } else {
+    fetch('gis-toggle-map/green-zone.geojson')
+      .then(res => res.json())
+      .then(data => {
+        greenZoneLayer = L.geoJSON(data, {
+          style: { color: 'green', fillOpacity: 0.3 }
+        }).addTo(map);
+        layerControl.addOverlay(greenZoneLayer, "✅ Green Zone");
+      });
+  }
+}
+
+function toggleDangerZone() {
+  if (dangerZoneLayer) {
+    if (map.hasLayer(dangerZoneLayer)) {
+      map.removeLayer(dangerZoneLayer);
+      layerControl.removeLayer(dangerZoneLayer);
+    } else {
+      map.addLayer(dangerZoneLayer);
+      layerControl.addOverlay(dangerZoneLayer, "❌ Danger Zone");
+    }
+  } else {
+    fetch('gis-toggle-map/danger-zone.geojson')
+      .then(res => res.json())
+      .then(data => {
+        dangerZoneLayer = L.geoJSON(data, {
+          style: { color: 'red', fillOpacity: 0.3, dashArray: '5,5' }
+        }).addTo(map);
+        layerControl.addOverlay(dangerZoneLayer, "❌ Danger Zone");
+      });
+  }
+}
+
+function toggleSafeZone() {
+  if (safeZoneLayer) {
+    if (map.hasLayer(safeZoneLayer)) {
+      map.removeLayer(safeZoneLayer);
+      layerControl.removeLayer(safeZoneLayer);
+    } else {
+      map.addLayer(safeZoneLayer);
+      layerControl.addOverlay(safeZoneLayer, "🛟 Safe Zone");
+    }
+  } else {
+    fetch('gis-toggle-map/safe-zone.geojson')
+      .then(res => res.json())
+      .then(data => {
+        safeZoneLayer = L.geoJSON(data, {
+          style: { color: 'blue', fillOpacity: 0.3 }
+        }).addTo(map);
+        layerControl.addOverlay(safeZoneLayer, "🛟 Safe Zone");
+      });
+  }
+}
+
+
   </script>
 
 </body>
