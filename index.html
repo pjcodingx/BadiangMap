@@ -99,7 +99,7 @@
           .then(res => res.json())
           .then(data => {
             boundariesLayer = L.geoJSON(data, {
-              style: { color: 'blue', weight: 2, fillOpacity: 0.1 }
+              style: { color: 'red', weight: 2, fillOpacity: 0.1, dashArray: '4,4' }
             }).addTo(map);
             layerControl.addOverlay(boundariesLayer, "🟦 Boundaries");
           });
