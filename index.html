@@ -272,6 +272,7 @@ function toggleGreenZone() {
   }
 }
 
+
 function toggleDangerZone() {
   if (dangerZoneLayer) {
     if (map.hasLayer(dangerZoneLayer)) {
@@ -279,19 +280,24 @@ function toggleDangerZone() {
       layerControl.removeLayer(dangerZoneLayer);
     } else {
       map.addLayer(dangerZoneLayer);
-      layerControl.addOverlay(dangerZoneLayer, "❌ Danger Zone");
+      layerControl.addOverlay(dangerZoneLayer, "⚠️ Danger Zone");
     }
   } else {
     fetch('gis-toggle-map/danger-zone.geojson')
       .then(res => res.json())
       .then(data => {
         dangerZoneLayer = L.geoJSON(data, {
-          style: { color: 'red', fillOpacity: 0.3, dashArray: '5,5' }
+          style: { color: 'red', fillColor: 'red', fillOpacity: 0.5 },
+          onEachFeature: (feature, layer) => {
+            const props = feature.properties;
+            layer.bindPopup(`<strong>${props.name || 'Danger Zone'}</strong><br>${props.description || ''}`);
+          }
         }).addTo(map);
-        layerControl.addOverlay(dangerZoneLayer, "❌ Danger Zone");
+        layerControl.addOverlay(dangerZoneLayer, "⚠️ Danger Zone");
       });
   }
 }
+
 
 function toggleSafeZone() {
   if (safeZoneLayer) {
