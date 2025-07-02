@@ -4,15 +4,69 @@
     {
       "type": "Feature",
       "properties": {
+        "name": "Barangay Hall",
+        "type": "Barangay Hall",
+        "description": "The main administrative building of the barangay."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [124.80398146101595, 10.1409552008991]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Chapel",
+        "type": "Chapel",
+        "description": "A place of worship and community gatherings."
+        
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [124.80403722775668, 10.141063865411425]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "School",
+        "type": "School",
+        "description": "A local school providing education to the community."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [124.80358728881566, 10.142309312751422]
+      }
+    },
+   
+
+     {
+      "type": "Feature",
+      "properties": {
         "name": "Badiang Gym",
         "type": "Gym",
         "description": "A gym for events, sports and more."
-        
       },
       "geometry": {
         "type": "Point",
         "coordinates": [124.8040555477802, 10.140734897826377]
       }
+    },
+
+     {
+      "type": "Feature",
+      "properties": {
+        "name": "Steel Works",
+        "type": "Steel",
+        "description": "A local business specializing in steel fabrication and works."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [124.80575821819002,
+          10.14027268741853]
+      }
     }
+
+
   ]
 }
