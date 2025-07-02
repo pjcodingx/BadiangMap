@@ -10,7 +10,7 @@
   <style>
     body {
       margin: 0;
-      font-family: "Avenir", sans-serif;
+      font-family: "Arial", sans-serif;
       background: #f4f4f4;
       font-size: 18px;
     }
@@ -32,6 +32,22 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
+    .barangay{
+      text-align: center;
+      padding: 15px;
+      margin-left: 50px;
+      transition: 0.4s;
+
+      color: #000;
+      background-color: #3182ce;
+    }
+
+    .barangay:hover{
+     padding: 20px;
+     background-color: #00396e;
+     color: #fff;
+    }
+
     button {
       margin: 5px;
       padding: 10px 20px;
@@ -46,7 +62,7 @@
     }
 
     button:hover {
-      background-color: #2b6cb0;
+      background-color: #295a8f;
     }
 
     #map {
@@ -160,13 +176,22 @@
       <li>Purok Tinubdan</li>
       <li>Purok Kapihan</li>
     </ul>
+<br>
+    <span style="font-size: 20px;"><strong> 🏢 Establishments: </strong></span>
+    <ul class="sublist">
+      <li>School</li>
+      <li>Barangay Hall</li>
+      <li>Badiang Gym</li>
+      <li>Chapel</li>
+      <li>more ongoing..</li>
+    </ul>
 
     
   </li>
 </ul>
 
 
-  <button onclick="loadPopulation()">👥 Load Population Layer</button>
+  <button class="barangay" onclick="loadPopulation()">👥 Barangay Boundaries</button>
 </div>
 
 
@@ -174,8 +199,8 @@
     <button onclick="toggleBoundaries()">🟨  Boundary</button>
     <button onclick="toggleBusinesses()">🏪  Businesses</button>
     <button onclick="toggleGreenZone()">🟩 Green Zone</button>
-    <button onclick="toggleDangerZone()">❌ Danger Zone</button>
-    <button onclick="toggleSafeZone()"> ✅Safe Zone</button>
+    <button onclick="toggleDangerZone()">🟥 Danger Zone</button>
+    <button onclick="toggleSafeZone()">🟦 Safe Zone</button>
 
   </div>
 
@@ -235,23 +260,52 @@
     fetch('gis-toggle-map/businesses.geojson')
       .then(res => res.json())
       .then(data => {
+        
+        const icons = {
+          Gym: L.icon({
+            iconUrl: 'images/basket.png',
+            iconSize: [30, 30],
+            iconAnchor: [15, 30],
+            popupAnchor: [0, -28]
+          }),
+          School: L.icon({
+            iconUrl: 'images/school.png',
+            iconSize: [30, 30],
+            iconAnchor: [15, 30],
+            popupAnchor: [0, -28]
+          }),
+          Chapel: L.icon({
+            iconUrl: 'images/chapel.png',
+            iconSize: [30, 30],
+            iconAnchor: [15, 30],
+            popupAnchor: [0, -28]
+          }),
+          "Barangay Hall": L.icon({
+            iconUrl: 'images/barangay.png',
+            iconSize: [30, 30],
+            iconAnchor: [15, 30],
+            popupAnchor: [0, -28]
+          }),
+          "Steel": L.icon({
+            iconUrl: 'images/steel.png',
+            iconSize: [30, 30],
+            iconAnchor: [15, 30],
+            popupAnchor: [0, -28]
+          }),
 
-        const gymIcon = L.icon({
-          iconUrl: 'images/basket.png',
-          iconSize: [30, 30],
-          iconAnchor: [15, 30],
-          popupAnchor: [0, -28]
-        });
+        };
 
+        // Create the GeoJSON layer
         businessesLayer = L.geoJSON(data, {
           pointToLayer: (feature, latlng) => {
             const props = feature.properties;
+            const icon = icons[props.type] || icons.Gym; 
             const popup = `
-              <strong>🏋️ ${props.name || 'Business Name'}</strong><br>
+              <strong>🏪 ${props.name || 'Business Name'}</strong><br>
               🏷️ Type: ${props.type || 'N/A'}<br>
               📝 ${props.description || ''}
             `;
-            return L.marker(latlng, { icon: gymIcon }).bindPopup(popup);
+            return L.marker(latlng, { icon }).bindPopup(popup);
           }
         }).addTo(map);
 
@@ -259,6 +313,7 @@
       });
   }
 }
+
 
   // 3 NEW BUTTON OR MAP
 
@@ -325,11 +380,26 @@ function toggleSafeZone() {
     }
   } else {
     fetch('gis-toggle-map/safe-zone.geojson')
-      .then(res => res.json())
+      .then(response => response.json())
       .then(data => {
         safeZoneLayer = L.geoJSON(data, {
-          style: { color: 'blue', fillOpacity: 0.3 }
-        }).addTo(map);
+          style: {
+            color: "blue",
+            weight: 2,
+            fillOpacity: 0.4
+          },
+          onEachFeature: function (feature, layer) {
+            if (feature.properties && feature.properties.name) {
+              layer.bindTooltip(feature.properties.name, {
+                permanent: false,
+                direction: "top",
+                className: "zone-tooltip"
+              });
+            }
+          }
+        });
+
+        map.addLayer(safeZoneLayer);
         layerControl.addOverlay(safeZoneLayer, "🛟 Safe Zone");
       });
   }
@@ -343,8 +413,69 @@ function toggleSidebar() {
   sidebar.classList.toggle('active');
 }
 
+let populationLayer;
+
 function loadPopulation() {
-  alert("This will load the population layer (to be implemented)");
+ if (populationLayer) {
+    if (map.hasLayer(populationLayer)) {
+      map.removeLayer(populationLayer);
+      layerControl.removeLayer(populationLayer);
+    } else {
+      map.addLayer(populationLayer);
+      layerControl.addOverlay(populationLayer, "🧑‍🤝‍🧑 Population Layer");
+    }
+  } else {
+    fetch('gis-toggle-map/barangays.geojson')  
+      .then(res => res.json())
+      .then(data => {
+        // Color map for each barangay
+        const colorMap = {
+          "Barangay Balimbing": "#1f77b4",  // Blue
+          "Barangay Central": "#2ca02c",  // Green
+          "Barangay Kahumayan": "#ff7f0e",  // Orange
+          "Barangay Tinubdan": "#d62728",  // Red
+          "Barangay Kapihan": "#9467bd"   // Purple
+        };
+
+        populationLayer = L.geoJSON(data, {
+          style: function (feature) {
+            const color = colorMap[feature.properties.name] || "#cccccc"; 
+            return {
+              color: "#333",              
+              weight: 1.5,
+              fillColor: color,
+              fillOpacity: 0.5
+            };
+          },
+          onEachFeature: function (feature, layer) {
+            // Add tooltip with barangay name
+            if (feature.properties && feature.properties.name) {
+              layer.bindTooltip(feature.properties.name, {
+                sticky: true,
+                direction: "top",
+                className: "population-tooltip"
+              });
+            }
+
+            
+            layer.on({
+              mouseover: function (e) {
+                const l = e.target;
+                l.setStyle({
+                  fillOpacity: 0.8
+                });
+                l.bringToFront();
+              },
+              mouseout: function (e) {
+                populationLayer.resetStyle(e.target);
+              }
+            });
+          }
+        }).addTo(map);
+
+        layerControl.addOverlay(populationLayer, "🧑‍🤝‍🧑 Population Layer");
+      });
+  }
   
 }
 
